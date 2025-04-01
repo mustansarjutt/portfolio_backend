@@ -7,8 +7,8 @@ import helmet from "helmet"
 const app = express()
 
 const limiter = rateLimit({
-    windowMs: 3 * 60 * 1000,
-    max: 2,
+    windowMs: 5 * 60 * 1000,
+    max: 10,
     message: "Too many requests. Try again latter"
 })
 
