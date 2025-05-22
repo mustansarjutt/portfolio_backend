@@ -5,7 +5,7 @@ import { ApiResponse } from "../utils/ApiResponse.js"
 const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-        user: process.env.EMAIL_USER,
+        user: process.env.EMAIL_SENDER,
         pass: process.env.EMAIL_PASS
     }
 })
@@ -13,7 +13,7 @@ const transporter = nodemailer.createTransport({
 const sendMail = async ({to, subject, text}) => {
     try {
         const mailOptions = {
-            from: process.env.EMAIL_USER,
+            from: process.env.EMAIL_SENDER,
             to,
             subject,
             text
