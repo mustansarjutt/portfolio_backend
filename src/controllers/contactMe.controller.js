@@ -1,6 +1,8 @@
 import { ApiError } from "../utils/ApiError.js"
 import { ApiResponse } from "../utils/ApiResponse.js"
-import { sendMail } from "../utils/mailer.js"
+// import { sendMail } from "../utils/mailer.js"
+import { sendMail } from "../utils/mailSender.js"
+import { generateContactConfirmationHtml } from "../utils/emailHtmlGenerator.js"
 import { isValidEmail } from "../utils/mailValidator.js"
 import { asyncHandler } from "../utils/asyncHandler.js"
 import { ContactMe } from "../models/contactMe.model.js"
@@ -17,22 +19,15 @@ const sendMessage = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Email is invalid")
     }
 
-    const emailText = `
-    This email is from the Contact Us form.
-    
-    Name: ${name}
-    Email: ${email}
+    const html = generateContactConfirmationHtml({ fullName: name, formName: "Contact-Me" })
 
-    Message:
-    ${message}
-    `
-    const response = await sendMail({
-        to: process.env.EMAIL_RECEIVER,
-        subject: title,
-        text: emailText
+    const response = await sendMail({ 
+        to: email,
+        subject: "We've received your message - MHJutt Portfolio",
+        html
     })
-    if (response.statusCode >= 300) {
-        throw new ApiError(response.statusCode, response.message)
+    if (!response) {
+        throw new ApiError(500, "Something went wrong")
     }
 
     const msgDBRecord = await ContactMe.create({
@@ -42,7 +37,7 @@ const sendMessage = asyncHandler(async (req, res) => {
         message
     })
     if (!msgDBRecord) {
-        throw new ApiError(500, "Something went wrong while saving message")
+        throw new ApiError(500, "Something went wrong.")
     }
 
     return res
