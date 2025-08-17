@@ -23,7 +23,7 @@ const sendMessage = asyncHandler(async (req, res) => {
 
     const response = await sendMail({ 
         to: email,
-        subject: "We've received your message - Mustansar Jutt",
+        subject: "We've received your message - Mustansar Gill",
         html
     })
     if (!response) {
