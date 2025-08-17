@@ -1,9 +1,10 @@
 import { ApiError } from "../utils/ApiError.js"
 import { ApiResponse } from "../utils/ApiResponse.js"
-import { sendMail } from "../utils/mailer.js"
+import { sendMail } from "../utils/mailSender.js"
 import { isValidEmail } from "../utils/mailValidator.js"
 import { asyncHandler } from "../utils/asyncHandler.js"
 import { HireMe } from "../models/hireMe.model.js"
+import { generateContactConfirmationHtml } from "../utils/emailHtmlGenerator.js"
 
 const contactForHire = asyncHandler(async (req, res) => {
     const { email, title, projectDetail } = req.body
@@ -17,22 +18,18 @@ const contactForHire = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Email is invalid")
     }
 
-    const emailText = `
-    This email is from the Hire me form
-    
-    Sender Email is ${email}
-
-    Project details are:
-    ${projectDetail}
-    `
+    const html = generateContactConfirmationHtml({
+        fullName: email,
+        formName: "Hire-Me"
+    })
 
     const response = await sendMail({
-        to: process.env.EMAIL_RECEIVER,
-        subject: title,
-        text: emailText
+        to: email,
+        subject: "We've received your message - Mustansar Jutt",
+        html
     })
-    if (response.statusCode >= 300) {
-        throw new ApiError(response.statusCode, response.message)
+    if (!response) {
+        throw new ApiError(500, "Something went wrong")
     }
 
     const hireMeDBRecord = await HireMe.create({
@@ -41,7 +38,7 @@ const contactForHire = asyncHandler(async (req, res) => {
         projectDetail
     })
     if (!hireMeDBRecord) {
-        throw new ApiError(500, "Something went wrong while saving message")
+        throw new ApiError(500, "Something went wrong")
     }
 
     return res

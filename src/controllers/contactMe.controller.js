@@ -23,7 +23,7 @@ const sendMessage = asyncHandler(async (req, res) => {
 
     const response = await sendMail({ 
         to: email,
-        subject: "We've received your message - MHJutt Portfolio",
+        subject: "We've received your message - Mustansar Jutt",
         html
     })
     if (!response) {
@@ -37,7 +37,7 @@ const sendMessage = asyncHandler(async (req, res) => {
         message
     })
     if (!msgDBRecord) {
-        throw new ApiError(500, "Something went wrong.")
+        throw new ApiError(500, "Something went wrong")
     }
 
     return res
