@@ -1,11 +1,11 @@
 import { ApiError } from "../utils/ApiError.js"
 import { ApiResponse } from "../utils/ApiResponse.js"
-// import { sendMail } from "../utils/mailer.js"
 import { sendMail } from "../utils/mailSender.js"
 import { generateContactConfirmationHtml } from "../utils/emailHtmlGenerator.js"
 import { isValidEmail } from "../utils/mailValidator.js"
 import { asyncHandler } from "../utils/asyncHandler.js"
 import { ContactMe } from "../models/contactMe.model.js"
+import { generateOwnerNotificationHtml } from "../utils/emailHtmlOwner.js"
 
 const sendMessage = asyncHandler(async (req, res) => {
     const { name, email, title, message } = req.body
@@ -20,13 +20,28 @@ const sendMessage = asyncHandler(async (req, res) => {
     }
 
     const html = generateContactConfirmationHtml({ fullName: name, formName: "Contact-Me" })
-
     const response = await sendMail({ 
         to: email,
         subject: "We've received your message - Mustansar Gill",
         html
     })
     if (!response) {
+        throw new ApiError(500, "Something went wrong")
+    }
+
+    const ownerHtml = generateOwnerNotificationHtml({
+        fullName: name,
+        email,
+        subject: title,
+        message,
+        formName: "Contact-Me"
+    })
+    const ownerResponse = await sendMail({
+        to: process.env.OWNER_EMAIL,
+        subject: `You receive message from ${email}`,
+        html: ownerHtml
+    })
+    if (!ownerResponse) {
         throw new ApiError(500, "Something went wrong")
     }
 

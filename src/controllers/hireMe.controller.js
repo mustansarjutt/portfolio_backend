@@ -5,6 +5,7 @@ import { isValidEmail } from "../utils/mailValidator.js"
 import { asyncHandler } from "../utils/asyncHandler.js"
 import { HireMe } from "../models/hireMe.model.js"
 import { generateContactConfirmationHtml } from "../utils/emailHtmlGenerator.js"
+import { generateOwnerNotificationHtml } from "../utils/emailHtmlOwner.js"
 
 const contactForHire = asyncHandler(async (req, res) => {
     const { email, title, projectDetail } = req.body
@@ -22,13 +23,28 @@ const contactForHire = asyncHandler(async (req, res) => {
         fullName: email,
         formName: "Hire-Me"
     })
-
     const response = await sendMail({
         to: email,
         subject: "We've received your message - Mustansar Gill",
         html
     })
     if (!response) {
+        throw new ApiError(500, "Something went wrong")
+    }
+
+    const ownerHtml = generateOwnerNotificationHtml({
+        fullName: email,
+        email,
+        formName: "Hire-Me",
+        subject: title,
+        message: projectDetail,
+    })
+    const ownerResponse = await sendMail({
+        to: process.env.OWNER_EMAIL,
+        subject: `You receive message from ${email}`,
+        html: ownerHtml
+    })
+    if (!ownerHtml) {
         throw new ApiError(500, "Something went wrong")
     }
 
