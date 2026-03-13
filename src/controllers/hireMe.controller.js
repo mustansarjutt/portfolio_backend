@@ -44,7 +44,7 @@ const contactForHire = asyncHandler(async (req, res) => {
         subject: `You receive message from ${email}`,
         html: ownerHtml
     })
-    if (!ownerHtml) {
+    if (!ownerResponse) {
         throw new ApiError(500, "Something went wrong")
     }
 
