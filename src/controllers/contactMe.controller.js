@@ -19,31 +19,31 @@ const sendMessage = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Email is invalid")
     }
 
-    const html = generateContactConfirmationHtml({ fullName: name, formName: "Contact-Me" })
-    const response = await sendMail({ 
-        to: email,
-        subject: "We've received your message - Mustansar Gill",
-        html
-    })
-    if (!response) {
-        throw new ApiError(500, "Something went wrong")
-    }
+    // const html = generateContactConfirmationHtml({ fullName: name, formName: "Contact-Me" })
+    // const response = await sendMail({ 
+    //     to: email,
+    //     subject: "We've received your message - Mustansar Gill",
+    //     html
+    // })
+    // if (!response) {
+    //     throw new ApiError(500, "Something went wrong")
+    // }
 
-    const ownerHtml = generateOwnerNotificationHtml({
-        fullName: name,
-        email,
-        subject: title,
-        message,
-        formName: "Contact-Me"
-    })
-    const ownerResponse = await sendMail({
-        to: process.env.OWNER_EMAIL,
-        subject: `You receive message from ${email}`,
-        html: ownerHtml
-    })
-    if (!ownerResponse) {
-        throw new ApiError(500, "Something went wrong")
-    }
+    // const ownerHtml = generateOwnerNotificationHtml({
+    //     fullName: name,
+    //     email,
+    //     subject: title,
+    //     message,
+    //     formName: "Contact-Me"
+    // })
+    // const ownerResponse = await sendMail({
+    //     to: process.env.OWNER_EMAIL,
+    //     subject: `You receive message from ${email}`,
+    //     html: ownerHtml
+    // })
+    // if (!ownerResponse) {
+    //     throw new ApiError(500, "Something went wrong")
+    // }
 
     const msgDBRecord = await ContactMe.create({
         name,

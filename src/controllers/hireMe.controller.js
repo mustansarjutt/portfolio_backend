@@ -19,34 +19,34 @@ const contactForHire = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Email is invalid")
     }
 
-    const html = generateContactConfirmationHtml({
-        fullName: email,
-        formName: "Hire-Me"
-    })
-    const response = await sendMail({
-        to: email,
-        subject: "We've received your message - Mustansar Gill",
-        html
-    })
-    if (!response) {
-        throw new ApiError(500, "Something went wrong")
-    }
+    // const html = generateContactConfirmationHtml({
+    //     fullName: email,
+    //     formName: "Hire-Me"
+    // })
+    // const response = await sendMail({
+    //     to: email,
+    //     subject: "We've received your message - Mustansar Gill",
+    //     html
+    // })
+    // if (!response) {
+    //     throw new ApiError(500, "Something went wrong")
+    // }
 
-    const ownerHtml = generateOwnerNotificationHtml({
-        fullName: email,
-        email,
-        formName: "Hire-Me",
-        subject: title,
-        message: projectDetail,
-    })
-    const ownerResponse = await sendMail({
-        to: process.env.OWNER_EMAIL,
-        subject: `You receive message from ${email}`,
-        html: ownerHtml
-    })
-    if (!ownerResponse) {
-        throw new ApiError(500, "Something went wrong")
-    }
+    // const ownerHtml = generateOwnerNotificationHtml({
+    //     fullName: email,
+    //     email,
+    //     formName: "Hire-Me",
+    //     subject: title,
+    //     message: projectDetail,
+    // })
+    // const ownerResponse = await sendMail({
+    //     to: process.env.OWNER_EMAIL,
+    //     subject: `You receive message from ${email}`,
+    //     html: ownerHtml
+    // })
+    // if (!ownerResponse) {
+    //     throw new ApiError(500, "Something went wrong")
+    // }
 
     const hireMeDBRecord = await HireMe.create({
         title,
